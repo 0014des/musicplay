@@ -1,5 +1,5 @@
 
-const tracks = [
+const songs = [
   {
     "title": "001_E361_Shishimaru.dspadpcm",
     "file": "music/001_E361_Shishimaru.dspadpcm.mp3"
@@ -8054,69 +8054,118 @@ const tracks = [
   }
 ];
 
-// 現在の曲インデックス
-let currentTrack = 0;
+const playlist = document.getElementById('playlist');
+const audio = document.getElementById('audio');
+const currentSong = document.getElementById('current-song');
+const playBtn = document.getElementById('play');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const progress = document.getElementById('progress');
+const currentTimeEl = document.getElementById('current-time');
+const durationEl = document.getElementById('duration');
+const volume = document.getElementById('volume');
 
-// 要素を取得
-const audio = document.getElementById("audio");
-const trackTitle = document.getElementById("track-title");
-const playPauseBtn = document.getElementById("play-pause");
-const prevBtn = document.getElementById("prev");
-const nextBtn = document.getElementById("next");
-const seekBar = document.getElementById("seek-bar");
-const volumeControl = document.getElementById("volume");
+let currentIndex = 0;
+let isPlaying = false;
 
-// 初期化
-function loadTrack(index) {
-  currentTrack = index;
-  audio.src = tracks[currentTrack].file;
-  trackTitle.textContent = tracks[currentTrack].title;
+// プレイリスト表示
+songs.forEach((song, idx) => {
+  const li = document.createElement('li');
+  li.textContent = song.name;
+  li.addEventListener('click', () => {
+    loadSong(idx);
+    playSong();
+  });
+  playlist.appendChild(li);
+});
+
+// 曲をロード
+function loadSong(index) {
+  currentIndex = index;
+  audio.src = songs[index].file;
+  currentSong.textContent = songs[index].name;
+  updatePlaylistHighlight();
 }
-loadTrack(currentTrack);
 
-// 再生・一時停止
-playPauseBtn.addEventListener("click", () => {
-  if (audio.paused) {
-    audio.play();
-    playPauseBtn.textContent = "⏸";
-  } else {
-    audio.pause();
-    playPauseBtn.textContent = "▶";
-  }
+// 再生
+function playSong() {
+  audio.play();
+  isPlaying = true;
+  playBtn.textContent = "⏸";
+}
+
+// 一時停止
+function pauseSong() {
+  audio.pause();
+  isPlaying = false;
+  playBtn.textContent = "▶";
+}
+
+// 前の曲
+prevBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+  loadSong(currentIndex);
+  playSong();
 });
 
 // 次の曲
-nextBtn.addEventListener("click", () => {
-  currentTrack = (currentTrack + 1) % tracks.length;
-  loadTrack(currentTrack);
-  audio.play();
-  playPauseBtn.textContent = "⏸";
+nextBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % songs.length;
+  loadSong(currentIndex);
+  playSong();
 });
 
-// 前の曲
-prevBtn.addEventListener("click", () => {
-  currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
-  loadTrack(currentTrack);
-  audio.play();
-  playPauseBtn.textContent = "⏸";
-});
-
-// シークバー更新
-audio.addEventListener("timeupdate", () => {
-  seekBar.value = (audio.currentTime / audio.duration) * 100 || 0;
-});
-
-// シークバー操作
-seekBar.addEventListener("input", () => {
-  audio.currentTime = (seekBar.value / 100) * audio.duration;
-});
-
-// 音量調整
-volumeControl.addEventListener("input", () => {
-  audio.volume = volumeControl.value;
+// 再生/一時停止
+playBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    pauseSong();
+  } else {
+    playSong();
+  }
 });
 
 // 曲終了時に次の曲へ
-audio.addEventListener("ended", () => {
+audio.addEventListener('ended', () => {
   nextBtn.click();
 });
+
+// プログレスバー更新
+audio.addEventListener('timeupdate', () => {
+  progress.value = audio.currentTime;
+  currentTimeEl.textContent = formatTime(audio.currentTime);
+});
+
+// 曲の長さ取得
+audio.addEventListener('loadedmetadata', () => {
+  progress.max = audio.duration;
+  durationEl.textContent = formatTime(audio.duration);
+});
+
+// プログレスバー操作
+progress.addEventListener('input', () => {
+  audio.currentTime = progress.value;
+});
+
+// 音量
+volume.addEventListener('input', () => {
+  audio.volume = volume.value;
+});
+
+// プレイリストのハイライト
+function updatePlaylistHighlight() {
+  Array.from(playlist.children).forEach((li, idx) => {
+    li.classList.toggle('selected', idx === currentIndex);
+  });
+}
+// 時間表示フォーマット
+function formatTime(sec) {
+  sec = Math.floor(sec);
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// 初期化
+loadSong(currentIndex);
+updatePlaylistHighlight();
+audio.volume = volume.value;

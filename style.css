@@ -58,3 +58,9 @@ body {
 #playlist li:hover {
   background: #555;
 }
+
+#playlist li.selected {
+  background: #ffd700;
+  color: #222;
+  font-weight: bold;
+}
