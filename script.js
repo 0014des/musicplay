@@ -8071,7 +8071,7 @@ let isPlaying = false;
 // プレイリスト表示
 songs.forEach((song, idx) => {
   const li = document.createElement('li');
-  li.textContent = song.name;
+  li.textContent = song.title;
   li.addEventListener('click', () => {
     loadSong(idx);
     playSong();
@@ -8083,7 +8083,11 @@ songs.forEach((song, idx) => {
 function loadSong(index) {
   currentIndex = index;
   audio.src = songs[index].file;
-  currentSong.textContent = songs[index].name;
+  currentSong.textContent = songs[index].title;
+
+  const nowPlaying = document.getElementById('now-playing');
+  nowPlaying.textContent = `現在再生中の曲: ${songs[index].title}`;
+
   updatePlaylistHighlight();
 }
 
@@ -8115,7 +8119,7 @@ nextBtn.addEventListener('click', () => {
   playSong();
 });
 
-// 再生/一時停止
+// 再生/一時停止切り替え
 playBtn.addEventListener('click', () => {
   if (isPlaying) {
     pauseSong();
@@ -8146,7 +8150,7 @@ progress.addEventListener('input', () => {
   audio.currentTime = progress.value;
 });
 
-// 音量
+// 音量調整
 volume.addEventListener('input', () => {
   audio.volume = volume.value;
 });
@@ -8154,10 +8158,11 @@ volume.addEventListener('input', () => {
 // プレイリストのハイライト
 function updatePlaylistHighlight() {
   Array.from(playlist.children).forEach((li, idx) => {
-    li.classList.toggle('selected', idx === currentIndex);
+    li.classList.toggle('playing', idx === currentIndex);
   });
 }
-// 時間表示フォーマット
+
+// 時間表示フォーマット（秒 → mm:ss）
 function formatTime(sec) {
   sec = Math.floor(sec);
   const m = Math.floor(sec / 60);

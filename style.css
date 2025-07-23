@@ -1,66 +1,116 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: sans-serif;
   background: #222;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-}
-
-.player {
-  width: 320px;
-  background: #333;
-  padding: 20px;
-  border-radius: 15px;
+  color: #ffffff;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  margin: 0;
+  padding: 20px;
 }
 
+/* プレイヤー全体 */
+.player {
+  max-width: 400px;
+  margin: auto;
+  background: #333;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 174, 255, 0.4);
+}
+
+/* タイトル */
+h1 {
+  margin-bottom: 15px;
+}
+
+/* 現在曲名表示 */
+#current-song, #now-playing {
+  margin: 10px 0;
+  font-weight: bold;
+  color: rgb(255, 251, 0); /* 水色 */
+}
+
+/* コントロールボタン */
+.controls {
+  margin: 10px 0;
+}
 .controls button {
-  background: #555;
+  background: #ff0000;
+  color: #ffffff;
   border: none;
-  color: #fff;
-  font-size: 24px;
-  margin: 0 10px;
   padding: 10px 15px;
-  border-radius: 50%;
+  margin: 0 5px;
+  font-size: 18px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s;
 }
-
 .controls button:hover {
-  background: #777;
+  background: #000000;
 }
 
+/* プログレスバー */
 #progress {
   width: 100%;
   margin: 10px 0;
 }
 
+/* 時間表示 */
 .time {
-  font-size: 14px;
   margin-bottom: 10px;
+  font-family: monospace;
 }
 
-#playlist {
+/* 音量 */
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: normal;
+}
+
+/* プレイリスト */
+.playlist {
   list-style: none;
   padding: 0;
   margin: 10px 0;
+  max-height: 10000px;
+  overflow-y: auto;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  background: #333;
+  color: #fff;
+  min-height: 100px;
+  
+  text-align: left;
+  padding-left: 15px;
 }
 
-#playlist li {
+/* プレイリスト項目 */
+.playlist li {
   padding: 8px;
+  border-bottom: 1px solid #555;
   cursor: pointer;
-  border-bottom: 1px solid #444;
 }
 
-#playlist li:hover {
+/* 最後のリストアイテムのボーダー消し */
+.playlist li:last-child {
+  border-bottom: none;
+}
+
+/* ホバー時 */
+.playlist li:hover {
   background: #555;
 }
 
-#playlist li.selected {
-  background: #ffd700;
-  color: #222;
+/* 再生中の曲ハイライト */
+.playlist li.playing {
+  background-color: rgba(30, 255, 0, 0.5);
+  color: #ffffff;
   font-weight: bold;
+}
+
+/* スマホ対応 */
+@media (max-width: 600px) {
+  .playlist {
+    max-height: 150px;
+  }
 }
